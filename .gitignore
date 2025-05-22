@@ -1,0 +1,42 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+
+# Node (frontend/)
+frontend/node_modules/
+frontend/.parcel-cache/
+frontend/.next/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.turbo/
+frontend/.eslintcache
+
+# Tailwind/JIT cache
+frontend/.tailwind/
+
+# npm & yarn
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+
+# Editor settings
+.idea/
+.vscode/
+*.swp
+
+# OS-generated
+*.bak
+*.tmp
+
+# Java/Maven (backend/)
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.idea/
+*.iml
+*.class
