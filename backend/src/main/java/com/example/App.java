@@ -12,17 +12,19 @@ import org.json.JSONObject;
  * Hello world!
  *
  */
+
+
 public class App 
 {
-    public static void main( String[] args ) throws Exception
+    public String getRequest(int language, String code) throws Exception
     {
         HttpClient client = HttpClient.newHttpClient();
 
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("language_id", 71); // Python 3.8
-        jsonObject.put("source_code", "print(sum(map(int, input().split())))");
-        jsonObject.put("stdin", "1 2 3");
+        jsonObject.put("language_id", language); // Python 3.8
+        jsonObject.put("source_code", code);
+        jsonObject.put("stdin", " ");
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("https://judge.er-ic.ca/submissions?base64_encoded=false&wait=true"))
@@ -34,6 +36,6 @@ public class App
 
         JSONObject jsonResponse = new JSONObject(response.body());
 
-        System.out.println("Judge0 Response: " + jsonResponse.get("stdout"));
+        return jsonResponse.optString("stdout", "No output");
     }
 }
