@@ -14,6 +14,8 @@ function App() {
   const { user, loading, inDiscord, setUser } = getUser();
 
   const [authLoading, setAuthLoading] = useState(false);
+
+  const [code, setCode] = useState(selectedProblem.initialCode); // default code
   const [output, setOutput] = useState(""); // for output message
   const [error, setError] = useState("");   // for error message
 
@@ -48,20 +50,14 @@ function App() {
   const handleDiscordLogin = async () => {
     try {
       setAuthLoading(true);
-      const code = await openDiscordAuthPopup();
-      console.log("Got authorization code:", code);
-      
-      const access_token = await getAccessToken(code);
-      
-      console.log("Got access token:", access_token);
+      const auth_code = await openDiscordAuthPopup();
+      const access_token = await getAccessToken(auth_code);
 
       localStorage.setItem('discode_access_token', access_token);
       
       const userData = await getUserInfo(access_token);
       localStorage.setItem('discode_user_data', JSON.stringify(userData));
 
-      console.log("Got user data:", userData);
-      // Update user context with the authenticated user data
       if (setUser) {
         setUser(userData);
       }
@@ -91,7 +87,7 @@ function App() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          username: discordUser?.username || "Guest",
+          username: user?.username || "Guest",
           code: code,
           language: "71"
         })
@@ -187,9 +183,6 @@ function App() {
               fontSize: 14,
               minimap: { enabled: false },
               scrollBeyondLastLine: false
-            }}
-            onChange={(value) => {
-              console.log(user);
             }}
           />
         </div>
