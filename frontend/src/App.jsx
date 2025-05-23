@@ -14,6 +14,8 @@ function App() {
   const { user, loading, inDiscord, setUser } = getUser();
 
   const [authLoading, setAuthLoading] = useState(false);
+  const [output, setOutput] = useState(""); // for output message
+  const [error, setError] = useState("");   // for error message
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -79,6 +81,43 @@ function App() {
     );
   }
 
+
+  // handles the submit button and passes it to the Java file
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: discordUser?.username || "Guest",
+          code: code,
+          language: "71"
+        })
+      });
+
+      const result = await response.json();
+
+      // Spring boot returns an OK if the server connects
+      // If server is good it either gets the output from the Springboot server or defaults to no output
+      if (response.ok) {
+        setOutput(result.message || "No output recieved");
+        setError("");
+      } else {
+        setError(result.error || "Something went wrong.");
+        setOutput("");
+      }
+
+      console.log("Server Response: ", result);
+    } catch (error) {
+      console.error("Error Submitting Code: ", error);
+      setError("Server Connection Failed");
+      setOutput("");
+    }
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-900 text-white px-8 py-6">
       {user && (
@@ -143,6 +182,7 @@ function App() {
             defaultLanguage="python"
             defaultValue={selectedProblem.initialCode}
             theme="vs-dark"
+            onChange={(value) => setCode(value)}
             options={{
               fontSize: 14,
               minimap: { enabled: false },
@@ -157,11 +197,33 @@ function App() {
 
       {/* Submit button centered below */}
       <div className="flex justify-center mt-6">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
+        onClick={handleSubmit}>
           Submit
         </button>
       </div>
+      
+
+      {/* Handles what ever is added to the output from the backend */}
+      {output && (
+        <div className="mt-4 text-center bg-green-800 p-4 rounded">
+          <h2 className="text-xl font-semibold mb-2">Output:</h2>
+          <pre className="text-sm whitespace-pre-wrap">{output}</pre>
+        </div>
+      )}
+            
+      {/* If there is an error this will display */}
+      {error && (
+        <div className="mt-4 text-center bg-red-800 p-4 rounded">
+          <h2 className="text-xl font-semibold mb-2">Error:</h2>
+          <pre className="text-sm whitespace-pre-wrap">{error}</pre>
+        </div>
+      )}
     </div>
+
+
+
+   
   )
 }
 export default App
