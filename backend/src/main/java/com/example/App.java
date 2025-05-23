@@ -8,12 +8,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.json.JSONObject;
 
-/**
- * Hello world!
- *
- */
-
-
 public class App 
 {
     public String getRequest(int language, String code) throws Exception

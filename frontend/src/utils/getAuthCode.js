@@ -22,28 +22,13 @@ export const getAccessToken = async (authCode) => {
   try {
     // WHAT IT SHOULD BE LATER
     //
-    // const response = await fetch('/.proxy/api/token', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //         code: authCode,
-    //     }),
-    // })
-    // const { access_token } = await response.json();
-
-    const response = await fetch('https://discord.com/api/oauth2/token', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/token`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
-            client_id: import.meta.env.VITE_DISCORD_CLIENT_ID,
-            client_secret: import.meta.env.VITE_DISCORD_CLIENT_SECRET,
-            grant_type: 'authorization_code',
+        body: JSON.stringify({
             code: authCode,
-            redirect_uri: import.meta.env.VITE_DISCORD_REDIRECT_URI,
         }),
     })
     const { access_token } = await response.json();

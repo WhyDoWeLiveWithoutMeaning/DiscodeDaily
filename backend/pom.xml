@@ -31,6 +31,12 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>me.paulschwarz</groupId>
+      <artifactId>spring-dotenv</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+
     <!-- ✅ JSON Parsing (optional if you use Jackson which comes with Web starter) -->
     <dependency>
       <groupId>org.json</groupId>

@@ -81,7 +81,7 @@ function App() {
   // handles the submit button and passes it to the Java file
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/submit", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

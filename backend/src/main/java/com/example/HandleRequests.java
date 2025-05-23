@@ -1,6 +1,6 @@
 package com.example;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +10,6 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/api")
 public class HandleRequests {
-
 
     // Retrieves whatever code is entered in the code section
     @PostMapping("/submit")
