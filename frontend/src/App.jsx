@@ -1,30 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext} from 'react';
 import { problems }  from './TempProblems.js';
-import { useDiscordSDK } from './hooks/useDiscordSDK.js';
-
+import { UserContext } from './lib/UserContext.jsx';
 import Editor from "@monaco-editor/react";
 
 
 function App() {
-  // Initialize Discord SDK
-  const discordUser = useDiscordSDK();
   const [selectedProblem, setSelectedProblem] = useState(problems[Math.floor(Math.random() * problems.length)]);
+  const { user, loading } = useContext(UserContext);
 
   useEffect(() => {
-    if (discordUser) {
-      console.log("Discord user:", discordUser);
-    }
-  }, [discordUser]);
+    // Fetch problems from the backend or use a static list
+    // For now, we are using a static list from TempProblems.js
+    // In the future, you can replace this with an API call to fetch problems
+    setSelectedProblem(problems[Math.floor(Math.random() * problems.length)]);
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+        <h1 className="text-2xl">Loading...</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white px-8 py-6">
-      {/* Title centered at the top */}
-      <h1 className="text-6xl font-bold text-center mb-8">Discode Daily {discordUser ? discordUser.username : "Guest"}</h1>
+      {user && (
+        <div className="absolute top-4 left-4 flex items-center gap-3">
+          <img
+            src={
+              user.avatar
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                : `https://cdn.discordapp.com/embed/avatars/0.png`
+            }
+            alt="User avatar"
+            className="w-12 h-12 rounded-full border border-white"
+          />
+          <span className="text-lg font-medium">{user.username}</span>
+        </div>
+      )}
+      <h1 className="text-6xl font-bold text-center mb-8">Discode Daily</h1>
 
       {/* Side-by-side layout for problem and editor */}
       <div className="flex justify-center gap-6">
         {/* Problem description panel */}
-        <div className="h-[500px] w-[40%] border rounded-lg overflow-y-auto p-4 bg-gray-800">
+        <div className="h-[65vh] w-[40%] border rounded-lg overflow-y-auto p-4 bg-gray-800">
           <h2 className="text-2xl font-semibold mb-2">{selectedProblem.title}</h2>
           <p className="text-sm whitespace-pre-line mb-4">{selectedProblem.description}</p>
           <h3 className="text-lg font-medium mb-1">Constraints:</h3>
@@ -36,7 +56,7 @@ function App() {
         </div>
 
         {/* Code editor */}
-        <div className="h-[500px] w-[40%] border rounded-lg overflow-hidden">
+        <div className="h-[65vh] w-[40%] border rounded-lg overflow-hidden">
           <Editor
             height="100%"
             defaultLanguage="python"
@@ -46,6 +66,9 @@ function App() {
               fontSize: 14,
               minimap: { enabled: false },
               scrollBeyondLastLine: false
+            }}
+            onChange={(value) => {
+              console.log(user);
             }}
           />
         </div>
