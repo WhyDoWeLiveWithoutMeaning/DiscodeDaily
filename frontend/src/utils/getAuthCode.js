@@ -65,3 +65,22 @@ export const getAuthenticatedUser = async (access_token) => {
   }
 };
 
+export const getUserInfo = async (access_token) => {
+  try {
+    const response = await fetch('https://discord.com/api/users/@me', {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user info');
+    }
+
+    const userInfo = await response.json();
+    return userInfo;
+  } catch (error) {
+    console.error("Error getting user info:", error);
+    throw error;
+  }
+};
