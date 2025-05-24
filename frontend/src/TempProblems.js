@@ -25,6 +25,7 @@ You need to ignore all leading and trailing spaces in s.`,
     "The words in s are separated by at least one space."
   ],
   initialCode: `def lengthOfLastWord(s):\n    # your code here\n    ...`,
+  helperCode: ``
 }
 
 export const problems = [exampleProblem, exampleProblem2]

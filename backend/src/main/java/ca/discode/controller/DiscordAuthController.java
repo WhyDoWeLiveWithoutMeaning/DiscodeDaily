@@ -1,10 +1,9 @@
-package com.example;
+package ca.discode.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -75,6 +74,11 @@ public class DiscordAuthController {
             .build();
             
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to exchange code: " + response.body());
+        }
+
         JSONObject jsonResponse = new JSONObject(response.body());
         
         Map<String, String> result = new HashMap<>();
