@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { problems }  from './TempProblems.js';
 import { getUser } from './lib/UserContext.jsx';
 
 import { getAccessToken, getUserInfo } from './utils/getAuthCode.js';
+import { getDailyProblem } from './utils/getDailyProblem.js';
 
 import { openDiscordAuthPopup } from './utils/discordAuthPopup.js';
 
@@ -10,18 +10,37 @@ import Editor from "@monaco-editor/react";
 
 
 function App() {
-
-  const [selectedProblem, setSelectedProblem] = useState(problems[Math.floor(Math.random() * problems.length)]);
+  const [problemLoading, setProblemLoading] = useState(true);
+  const [selectedProblem, setSelectedProblem] = useState({
+    title: "Loading...",
+    description: "Please wait while we fetch today's challenge...",
+    constraints: ["Loading constraints..."],
+    initialCode: "# Loading code...",
+    unitTest: ""
+  });
   const { user, loading, inDiscord, setUser } = getUser();
 
   const [authLoading, setAuthLoading] = useState(false);
-
-  const [code, setCode] = useState(selectedProblem.initialCode); // default code
-  const [unittest] = useState(selectedProblem.unitTest)
+  const [code, setCode] = useState(""); // for code editor content
   const [output, setOutput] = useState(""); // for output message
   const [error, setError] = useState("");   // for error message
 
   useEffect(() => {
+
+    const fetchProblem = async () => {
+      try {
+        setProblemLoading(true);
+        const problem = await getDailyProblem();
+        setSelectedProblem(problem);
+        setCode(problem.initialCode); // Set initial code when problem loads
+      } catch (err) {
+        console.error("Failed to load daily problem:", err);
+        setError("Failed to load daily problem. Please try again later.");
+      } finally {
+        setProblemLoading(false);
+      }
+    };
+
     const initializeUser = async () => {
       const accessToken = localStorage.getItem('discode_access_token');
       const userData = localStorage.getItem('discode_user_data');
@@ -47,6 +66,7 @@ function App() {
     };
 
     initializeUser();
+    fetchProblem();
   }, []);
 
   const handleDiscordLogin = async () => {
@@ -84,7 +104,7 @@ function App() {
   const handleSubmit = async () => {
     try {
       //${import.meta.env.VITE_BACKEND_URL}
-      const response = await fetch(`http://localhost:8080/api/submit`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api'}/code/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -163,39 +183,63 @@ function App() {
 
       {/* Side-by-side layout for problem and editor */}
       <div className="flex justify-center gap-6">
-        {/* Problem description panel */}
+        {/* Problem description panel with skeleton loading state */}
         <div className="h-[65vh] w-[40%] border rounded-lg overflow-y-auto p-4 bg-gray-800">
-          <h2 className="text-2xl font-semibold mb-2">{selectedProblem.title}</h2>
-          <p className="text-sm whitespace-pre-line mb-4">{selectedProblem.description}</p>
-          <h3 className="text-lg font-medium mb-1">Constraints:</h3>
-          <ul className="list-disc list-inside text-sm space-y-1">
-            {selectedProblem.constraints.map((c, i) => (
-              <li key={i}>{c}</li>
-            ))}
-          </ul>
+          {problemLoading ? (
+            <>
+              <div className="h-8 bg-gray-700 rounded mb-4 animate-pulse"></div>
+              <div className="h-48 bg-gray-700 rounded mb-4 animate-pulse"></div>
+              <div className="h-6 bg-gray-700 rounded mb-2 animate-pulse"></div>
+              <div className="h-4 bg-gray-700 rounded mb-2 animate-pulse w-3/4"></div>
+              <div className="h-4 bg-gray-700 rounded mb-2 animate-pulse w-2/3"></div>
+              <div className="h-4 bg-gray-700 rounded mb-2 animate-pulse w-1/2"></div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-semibold mb-2">{selectedProblem.title}</h2>
+              <p className="text-sm whitespace-pre-line mb-4">{selectedProblem.description}</p>
+              <h3 className="text-lg font-medium mb-1">Constraints:</h3>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                {selectedProblem.constraints.map((c, i) => (
+                  <li key={i}>{c}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
 
-        {/* Code editor */}
+        {/* Code editor with skeleton loading state */}
         <div className="h-[65vh] w-[40%] border rounded-lg overflow-hidden">
-          <Editor
-            height="100%"
-            defaultLanguage="python"
-            defaultValue={selectedProblem.initialCode}
-            theme="vs-dark"
-            onChange={(value) => setCode(value)}
-            options={{
-              fontSize: 14,
-              minimap: { enabled: false },
-              scrollBeyondLastLine: false
-            }}
-          />
+          {problemLoading ? (
+            <div className="h-full bg-gray-800 animate-pulse flex items-center justify-center">
+              <span className="text-gray-500">Loading code editor...</span>
+            </div>
+          ) : (
+            <Editor
+              height="100%"
+              defaultLanguage="python"
+              value={code}
+              theme="vs-dark"
+              onChange={(value) => setCode(value)}
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false
+              }}
+            />
+          )}
         </div>
       </div>
 
       {/* Submit button centered below */}
       <div className="flex justify-center mt-6">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
-        onClick={handleSubmit}>
+        <button 
+          className={`text-white font-bold py-2 px-6 rounded ${problemLoading 
+            ? 'bg-gray-500 cursor-not-allowed' 
+            : 'bg-blue-500 hover:bg-blue-700'}`}
+          onClick={handleSubmit}
+          disabled={problemLoading}
+        >
           Submit
         </button>
       </div>
@@ -217,10 +261,6 @@ function App() {
         </div>
       )}
     </div>
-
-
-
-   
   )
 }
 export default App

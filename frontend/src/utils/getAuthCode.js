@@ -20,9 +20,7 @@ export const getAuthCode = async () => {
 
 export const getAccessToken = async (authCode) => {
   try {
-    // WHAT IT SHOULD BE LATER
-    //
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/token`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/discord`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
