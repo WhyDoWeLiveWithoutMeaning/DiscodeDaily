@@ -19,9 +19,13 @@ public class CodeSubmissionController {
     public ResponseEntity<Map<String, String>> handleCode(@RequestBody Map<String, String> payload) {
         String username = payload.get("username");
         String code = payload.get("code");
+        String unittest = payload.get("unittest");
+
+        code = code + unittest;
 
         System.out.println("Received code from user: " + username);
         System.out.println("Code: " + code);
+        System.out.println("Unittest: " + unittest);
 
         String output = codeExecutionService.executeCode(71, code);
 

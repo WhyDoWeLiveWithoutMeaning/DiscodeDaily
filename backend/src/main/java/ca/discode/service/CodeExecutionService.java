@@ -35,15 +35,13 @@ public class CodeExecutionService {
         System.out.println("Judge0 Status: " + response.statusCode());
         System.out.println("Response: " + response.body());
 
-        if (response.statusCode() != 200) {
+        if (response.statusCode() != 201) {
             return "Judge0 error: " + response.statusCode() + " — response: " + response.body();
         }
 
         JSONObject jsonResponse = new JSONObject(response.body());
 
-        return jsonResponse.optString("stdout",
-                jsonResponse.optString("stderr",
-                        jsonResponse.optString("message", "No output received")));
+        return jsonResponse.optString("stdout", "No Output Received");
 
     } catch (Exception e) {
         e.printStackTrace();

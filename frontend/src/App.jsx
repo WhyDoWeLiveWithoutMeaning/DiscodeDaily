@@ -10,12 +10,14 @@ import Editor from "@monaco-editor/react";
 
 
 function App() {
+
   const [selectedProblem, setSelectedProblem] = useState(problems[Math.floor(Math.random() * problems.length)]);
   const { user, loading, inDiscord, setUser } = getUser();
 
   const [authLoading, setAuthLoading] = useState(false);
 
   const [code, setCode] = useState(selectedProblem.initialCode); // default code
+  const [unittest] = useState(selectedProblem.unitTest)
   const [output, setOutput] = useState(""); // for output message
   const [error, setError] = useState("");   // for error message
 
@@ -81,7 +83,8 @@ function App() {
   // handles the submit button and passes it to the Java file
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/submit`, {
+      //${import.meta.env.VITE_BACKEND_URL}
+      const response = await fetch(`http://localhost:8080/api/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -89,6 +92,7 @@ function App() {
         body: JSON.stringify({
           username: user?.username || "Guest",
           code: code,
+          unittest: unittest,
           language: "71"
         })
       });

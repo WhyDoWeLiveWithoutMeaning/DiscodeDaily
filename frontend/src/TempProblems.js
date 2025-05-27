@@ -10,6 +10,7 @@ Your function should take an integer n and return the nth Fibonacci number.`,
     "Your solution should be efficient and clean"
   ],
   initialCode: `def fib(n):\n    # your code here\n    ...`,
+  unitTest: `\nif fib(5) == 5 and fib(2) == 1 and fib(10) == 55:\n  print("PASS")\nelse:\n  print("FAIL")`
 }
 
 const exampleProblem2 = {
@@ -25,7 +26,7 @@ You need to ignore all leading and trailing spaces in s.`,
     "The words in s are separated by at least one space."
   ],
   initialCode: `def lengthOfLastWord(s):\n    # your code here\n    ...`,
-  helperCode: ``
+  unitTest: `\nif lengthOfLastWord("Hello World") == 5:\n  print("PASS BITCH")\nelse:\n print("FAIL BITCH")`
 }
 
 export const problems = [exampleProblem, exampleProblem2]
