@@ -1,0 +1,41 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  frontend:
+    environment:
+      - VITE_DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - VITE_DISCORD_REDIRECT_URI=https://${DOMAIN}/callback
+      - VITE_DISCORD_SCOPES=identify
+      - VITE_BACKEND_URL=https://${DOMAIN}/api
+
+  backend:
+    environment:
+      - SERVER_PORT=5000
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - DISCORD_REDIRECT_URI=https://${DOMAIN}/callback
+      - FRONTEND_URL=https://${DOMAIN}
+      - JUDGE0_URL=${JUDGE0_URL}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432

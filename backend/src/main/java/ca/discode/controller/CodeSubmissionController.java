@@ -30,13 +30,15 @@ public class CodeSubmissionController {
         String code = payload.get("code");
         String unittest = payload.get("unittest");
 
-        code = code + unittest;
+        code = code + "\n\n" + unittest;
 
         System.out.println("Received code from user: " + username);
-        System.out.println("Code: " + code);
-        System.out.println("Unittest: " + unittest);
+        // System.out.println("Code: " + code);
+        // System.out.println("Unittest: " + unittest);
 
         String output = codeExecutionService.executeCode(71, code);
+
+        System.out.println("Execution output: " + output);
 
         return ResponseEntity.ok(Map.of("message", output));
     }
@@ -62,7 +64,7 @@ public class CodeSubmissionController {
                 "There will be at least one word in s"
             ));
             problem.setInitialCode("def lengthOfLastWord(s):\n    # your code here\n    pass");
-            problem.setUnitTest("import unittest\n\nclass TestLengthOfLastWord(unittest.TestCase):\n    def test_basic_case(self):\n        self.assertEqual(lengthOfLastWord(\"Hello World\"), 5)\n    \n    def test_trailing_spaces(self):\n        self.assertEqual(lengthOfLastWord(\"   fly me   to   the moon  \"), 4)\n    \n    def test_single_word(self):\n        self.assertEqual(lengthOfLastWord(\"luffy\"), 5)\n\nif __name__ == '__main__':\n    unittest.main()");
+            problem.setUnitTest("\n\nimport unittest\n\nclass TestLengthOfLastWord(unittest.TestCase):\n    def test_basic_case(self):\n        self.assertEqual(lengthOfLastWord(\"Hello World\"), 5)\n    \n    def test_trailing_spaces(self):\n        self.assertEqual(lengthOfLastWord(\"   fly me   to   the moon  \"), 4)\n    \n    def test_single_word(self):\n        self.assertEqual(lengthOfLastWord(\"luffy\"), 5)\n\nif __name__ == '__main__':\n    unittest.main()");
         }
         
         Map<String, Object> response = new HashMap<>();

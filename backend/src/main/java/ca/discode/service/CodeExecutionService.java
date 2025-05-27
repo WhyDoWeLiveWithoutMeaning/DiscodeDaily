@@ -41,7 +41,11 @@ public class CodeExecutionService {
 
         JSONObject jsonResponse = new JSONObject(response.body());
 
-        return jsonResponse.optString("stdout", "No Output Received");
+        System.out.println("Judge0 Response: " + jsonResponse.toString(2));
+
+        return jsonResponse.optString("stdout", "") + "\n" +
+               jsonResponse.optString("stderr", "") + "\n" +
+               "Status: " + jsonResponse.getJSONObject("status").getString("description");
 
     } catch (Exception e) {
         e.printStackTrace();

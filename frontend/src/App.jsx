@@ -60,9 +60,6 @@ function App() {
           localStorage.removeItem('discode_user_data');
         }
       }
-
-      // Always select a random problem on mount
-      setSelectedProblem(problems[Math.floor(Math.random() * problems.length)]);
     };
 
     initializeUser();
@@ -112,7 +109,7 @@ function App() {
         body: JSON.stringify({
           username: user?.username || "Guest",
           code: code,
-          unittest: unittest,
+          unittest: selectedProblem.unitTest,
           language: "71"
         })
       });

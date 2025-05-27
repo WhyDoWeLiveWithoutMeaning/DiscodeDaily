@@ -1,6 +1,6 @@
 export async function getDailyProblem() {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/code/daily-challenge`);
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api'}/code/daily-challenge`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch daily problem: ${response.status}`);
