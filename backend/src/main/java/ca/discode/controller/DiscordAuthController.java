@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class DiscordAuthController {
 
     @Value("${DISCORD_CLIENT_ID}")

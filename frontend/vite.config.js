@@ -8,10 +8,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server:{
     allowedHosts: ['mon-numerous-intended-propecia.trycloudflare.com'],
-    https: {
-      key: fs.readFileSync('./localhost-key.pem'),
-      cert: fs.readFileSync('./localhost.pem'),
-    },
     host: 'localhost',
     port: 5173
   }

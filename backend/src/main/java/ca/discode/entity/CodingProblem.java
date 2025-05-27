@@ -21,6 +21,9 @@ public class CodingProblem {
     @Column(length = 2000)
     private String initialCode;
 
+    @Column(length = 2000)
+    private String unitTest;
+
     // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -36,4 +39,8 @@ public class CodingProblem {
 
     public String getInitialCode() { return initialCode; }
     public void setInitialCode(String initialCode) { this.initialCode = initialCode; }
+
+    public String getUnitTest() { return unitTest; }
+    public void setUnitTest(String unitTest) { this.unitTest = unitTest; }
+
 }
