@@ -5,7 +5,7 @@ COPY package*.json ./
 
 # ---- Dependencies ----
 FROM base AS dependencies
-RUN npm ci
+RUN npm install
 
 # ---- Copy Files/Build ----
 FROM dependencies AS build
